@@ -6,11 +6,6 @@ require '../../controller/gestorSession/gestorSession.php';
 
 $data = json_decode(file_get_contents('php://input'), true);
 
-$response = [
-    'status' => 99,
-    'message' => 'Error inesperado'
-];
-
 if (isset($data['user']) && isset($data['password'])) {
 
     $login = new LoginUsuario();
@@ -18,13 +13,9 @@ if (isset($data['user']) && isset($data['password'])) {
     $user = htmlspecialchars($data['user'], ENT_QUOTES, 'UTF-8');
     $pass = htmlspecialchars($data['password'], ENT_QUOTES, 'UTF-8');
 
-    try {
-        $consulta = $login->verificarUsuraio($user, $pass);
-    } catch (\Throwable $th) {
-        $consulta = null;
-    }
+    $consulta = $login->verificarUsuraio($user, $pass);
 
-    if (is_array($consulta) && isset($consulta['status'])) {
+    if (isset($consulta)) {
 
         if ($consulta['status'] == 0) {
             session_start();
@@ -37,26 +28,25 @@ if (isset($data['user']) && isset($data['password'])) {
                 'status' => $consulta['status'],
                 "message" => 'OK',
             ];
-        } elseif ($consulta['status'] == 1) {
+        }
+
+        if ($consulta['status'] == 1) {
             $response = [
                 'status' => $consulta['status'],
                 'message' => $consulta['message'],
             ];
-        } elseif ($consulta['status'] == 2) {
+        }
+
+        if ($consulta['status'] == 2) {
             $response = [
                 'status' => $consulta['status'],
                 'message' => 'Usuario duplicado, comunicarse con el administrador del sistema',
             ];
-        } else {
-            $response = [
-                'status' => $consulta['status'],
-                'message' => $consulta['message'] ?? 'Respuesta no reconocida'
-            ];
         }
     } else {
         $response = [
-            'status' => 500,
-            'message' => 'Error de conexión o respuesta inválida del servidor'
+            'status' => '4',
+            'message' => 'Se presento un error no identificado!',
         ];
     }
 
