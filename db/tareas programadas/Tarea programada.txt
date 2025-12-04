@@ -1,0 +1,35 @@
+DROP EVENT IF EXISTS db_general.actualizar_estado_evento;
+
+CREATE or replace EVENT db_general.actualizar_estado_evento
+ON SCHEDULE
+    EVERY 1 DAY
+    STARTS TIMESTAMP(CURRENT_DATE, '08:00:00')  -- inicia hoy a las 8:00am, y luego todos los días a esa hora
+DO
+BEGIN
+    -- Solo lunes a viernes
+    IF DAYOFWEEK(CURDATE()) BETWEEN 2 AND 6 THEN
+        UPDATE tbl_gestor_mensaje t
+        JOIN (
+            SELECT GS_CODIGO
+            FROM (
+                SELECT
+                    GS_CODIGO,
+                    GS_USUARIO_CREACION,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY GS_USUARIO_CREACION
+                        ORDER BY GS_CODIGO
+                    ) AS rn
+                FROM tbl_gestor_mensaje
+                WHERE GS_ESTATUS = 'ACTIVO'
+            ) tmp
+            WHERE rn <= 120
+        ) s ON t.GS_CODIGO = s.GS_CODIGO
+        SET t.GS_ESTATUS = 'SIN GESTION';
+    END IF;
+END;
+
+
+SELECT EVENT_NAME, STATUS, LAST_EXECUTED
+FROM information_schema.EVENTS
+WHERE EVENT_SCHEMA = 'db_general';
+    
