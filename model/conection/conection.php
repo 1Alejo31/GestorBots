@@ -41,13 +41,13 @@ class ConectionDb
     }
 }
 
-//$conection = new conectionDb();
-//$conection->conectionDb();
+$conection = new conectionDb();
+$conection->conectionDb();
 
-ECHO '<BR>';
-ECHO 'EQ_DETALLE1 -> ' . EnCrypt("1033801666");
-ECHO '<BR>';
-//ECHO 'EQ_DETALLE1 -> ' . EnCrypt("GestorRpaPro");
+#ECHO '<BR>';
+#ECHO 'EQ_DETALLE1 -> ' . EnCrypt("3.128.91.180");
+#ECHO '<BR>';
+#ECHO 'EQ_DETALLE1 -> ' . EnCrypt("GestorRpaPro");
 #ECHO '<BR>';
 #ECHO 'EQ_DETALLE1 -> ' . EnCrypt("RpaGestor2025.*");
 #ECHO '<BR>';
